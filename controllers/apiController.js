@@ -80,7 +80,8 @@ const getChart5 = asyncHandler(async (req, res) => {
       SELECT 
           dr.welding_meth, dr.defect_count, dr.total_count,
           round(dr.defect_rate, 2) AS 'def_rate', dc.dep,
-          round((dc.dep_count * 100.0 / tc.total_count),2) AS 'dep_def_rate'
+          round((dc.dep_count * 100.0 / tc.total_count),2) AS 'dep_def_rate',
+          C1, C2, C3, C4, C5
       FROM 
           (
               SELECT 
@@ -98,7 +99,12 @@ const getChart5 = asyncHandler(async (req, res) => {
               SELECT 
                   welding_meth,
                   dep,
-                  COUNT(*) AS dep_count
+                  COUNT(*) AS dep_count,
+                  sum(CASE WHEN reason_code = 'C1' THEN 1 ELSE 0 END) as C1,
+                  sum(CASE WHEN reason_code = 'C2' THEN 1 ELSE 0 END) as C2,
+                  sum(CASE WHEN reason_code = 'C3' THEN 1 ELSE 0 END) as C3,
+                  sum(CASE WHEN reason_code = 'C4' THEN 1 ELSE 0 END) as C4,
+                  sum(CASE WHEN reason_code = 'C5' THEN 1 ELSE 0 END) as C5
               FROM 
                   samsung_heavy_industry.welding_defect_rate
               WHERE 
