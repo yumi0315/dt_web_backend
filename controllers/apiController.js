@@ -73,4 +73,66 @@ const getChart2 = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getImage, getChart1, getChart2 };
+const getChart5 = asyncHandler(async (req, res) => {
+  try {
+    const [rows] = await promisePool.query(
+      `
+      SELECT 
+          dr.welding_meth, dr.defect_count, dr.total_count,
+          round(dr.defect_rate, 2) AS 'def_rate', dc.dep,
+          round((dc.dep_count * 100.0 / tc.total_count),2) AS 'dep_def_rate',
+          C1, C2, C3, C4, C5
+      FROM 
+          (
+              SELECT 
+                  welding_meth,
+                  SUM(CASE WHEN usage_decision = '보류' THEN 1 ELSE 0 END) AS defect_count,
+                  COUNT(*) AS total_count,
+                  (SUM(CASE WHEN usage_decision = '보류' THEN 1 ELSE 0 END) * 100.0 / COUNT(*)) AS defect_rate
+              FROM 
+                  samsung_heavy_industry.welding_defect_rate
+              GROUP BY 
+                  welding_meth
+          ) dr
+      LEFT JOIN 
+          (
+              SELECT 
+                  welding_meth,
+                  dep,
+                  COUNT(*) AS dep_count,
+                  sum(CASE WHEN reason_code = 'C1' THEN 1 ELSE 0 END) as C1,
+                  sum(CASE WHEN reason_code = 'C2' THEN 1 ELSE 0 END) as C2,
+                  sum(CASE WHEN reason_code = 'C3' THEN 1 ELSE 0 END) as C3,
+                  sum(CASE WHEN reason_code = 'C4' THEN 1 ELSE 0 END) as C4,
+                  sum(CASE WHEN reason_code = 'C5' THEN 1 ELSE 0 END) as C5
+              FROM 
+                  samsung_heavy_industry.welding_defect_rate
+              WHERE 
+                  usage_decision = '보류'
+              GROUP BY 
+                  welding_meth, dep
+          ) dc ON dr.welding_meth = dc.welding_meth
+      LEFT JOIN 
+          (
+              SELECT 
+                  welding_meth,
+                  COUNT(*) AS total_count
+              FROM 
+                  samsung_heavy_industry.welding_defect_rate
+              WHERE 
+                  usage_decision = '보류'
+              GROUP BY 
+                  welding_meth
+          ) tc ON dc.welding_meth = tc.welding_meth
+      ORDER BY 
+          dr.welding_meth, dc.dep
+      `
+    );
+    res.json(rows);
+  } catch (error) {
+    console.error("Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+module.exports = { getImage, getChart1, getChart2, getChart5 };
