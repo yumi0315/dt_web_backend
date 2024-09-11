@@ -78,12 +78,38 @@ const getChart3 = asyncHandler(async (req, res) => {
     const [rows] = await promisePool.query(
       `
       SELECT 
-            proj, 
-            COUNT(CASE WHEN stat = "완료" THEN 1 END) AS complete_count,
-            ROUND((COUNT(CASE WHEN stat = "완료" THEN 1 END) / COUNT(*))*100,2) AS total_per,
-            COUNT(*) AS total_count
-      FROM design_change_request
-      GROUP BY proj
+    dp_bom_desc,
+    COUNT(work_plan) AS Plan_count,
+    SUM(CASE WHEN work_perform < '2014-07-01' THEN 1 ELSE 0 END) AS Completed_Tasks,
+    ROUND((SUM(CASE WHEN work_perform < '2014-07-01' THEN 1 ELSE 0 END) * 100.0 / COUNT(work_plan)), 2) AS "Achievement_Rate(%)"
+FROM 
+    structural_production_structure
+WHERE 
+    proj = 'P1'
+GROUP BY 
+    dp_bom_desc
+
+UNION ALL
+
+SELECT 
+    'Total' AS dp_bom_desc,
+    SUM(Plan_count) AS Plan_count,
+    SUM(Completed_Tasks) AS Completed_Tasks,
+    ROUND((SUM(Completed_Tasks) * 100.0 / SUM(Plan_count)), 2) AS "Achievement_Rate(%)"
+FROM (
+    SELECT 
+        dp_bom_desc,
+        COUNT(work_plan) AS Plan_count,
+        SUM(CASE WHEN work_perform < '2014-07-01' THEN 1 ELSE 0 END) AS Completed_Tasks
+    FROM 
+        structural_production_structure
+    WHERE 
+        proj = 'P1'
+    GROUP BY 
+        dp_bom_desc
+) AS subquery
+ORDER BY 
+    dp_bom_desc;
       `
     );
     res.json(rows);
