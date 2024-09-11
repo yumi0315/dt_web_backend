@@ -171,7 +171,7 @@ const getChart5 = asyncHandler(async (req, res) => {
                   welding_meth
           ) tc ON dc.welding_meth = tc.welding_meth
       ORDER BY 
-          dr.welding_meth, dc.dep
+          dr.welding_meth, dep_def_rate desc, dc.dep
       `
     );
     res.json(rows);
