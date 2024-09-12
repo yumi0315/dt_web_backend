@@ -27,7 +27,7 @@ const getTable4 = asyncHandler(async (req, res) => {
             SELECT 
                 dp_bom_desc,
                 COUNT(work_plan) AS Plan_count,
-                SUM(CASE WHEN work_perform < ? THEN 1 ELSE 0 END) AS Completed_Tasks
+                SUM(CASE WHEN work_perform <= ? THEN 1 ELSE 0 END) AS Completed_Tasks
             FROM 
                 structural_production_structure
             WHERE 
@@ -63,28 +63,8 @@ const getChart4 = asyncHandler(async (req, res) => {
             proj = ?
         GROUP BY 
             respon_dep
-        UNION ALL
-        SELECT 
-            'Total' AS respon_dep,
-            SUM(Plan_count) AS Plan_count,
-            SUM(Completed_Tasks) AS Completed_Tasks,
-            ROUND((SUM(Completed_Tasks) * 100.0 / SUM(Plan_count)), 2) AS "Achievement_Rate"
-        FROM (
-            SELECT 
-                respon_dep,
-                COUNT(work_plan) AS Plan_count,
-                SUM(CASE WHEN work_perform <= ? THEN 1 ELSE 0 END) AS Completed_Tasks
-            FROM 
-                structural_production_structure
-            WHERE 
-                proj = ?
-            GROUP BY 
-                respon_dep
-        ) AS subquery
-        ORDER BY 
-            respon_dep
         `,
-      [date, date, proj, date, proj]
+      [date, date, proj]
     );
     res.json(rows);
   } catch (error) {
