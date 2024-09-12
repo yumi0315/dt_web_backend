@@ -57,18 +57,41 @@ const getChart2 = asyncHandler(async (req, res) => {
   try {
     const [rows] = await promisePool.query(
       `
-      SELECT 
-            proj, 
-            COUNT(CASE WHEN stat = "완료" THEN 1 END) AS complete_count,
-            ROUND((COUNT(CASE WHEN stat = "완료" THEN 1 END) / COUNT(*))*100,2) AS total_per,
-            COUNT(*) AS total_count
-      FROM design_change_request
-      GROUP BY proj
+      SELECT
+          proj,
+          stat,
+          COUNT(*) AS stat_count,
+          ROUND((COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY proj)), 2) AS stat_percent
+      FROM 
+          design_change_request
+      GROUP BY 
+          proj, stat
       `
     );
     res.json(rows);
   } catch (error) {
     console.error("Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+const getTable2 = asyncHandler(async (req, res) => {
+  const { proj } = req.params;
+  try {
+    const [rows] = await promisePool.query(
+      `
+      SELECT 
+          reg_type, ECN_No, stat, request_dep, urg, import, action_dep
+      FROM 
+          design_change_request
+      where
+          proj = ?
+      `,
+      [proj]
+    );
+    res.json(rows);
+  } catch (error) {
+    console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -181,4 +204,11 @@ const getChart5 = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getImage, getChart1, getChart3, getChart2, getChart5 };
+module.exports = {
+  getImage,
+  getChart1,
+  getChart3,
+  getChart2,
+  getTable2,
+  getChart5,
+};
