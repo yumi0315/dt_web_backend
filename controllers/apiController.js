@@ -42,7 +42,10 @@ const getChart1 = asyncHandler(async (req, res) => {
             ) AS ranked
       WHERE
               rn = 1
-              AND proj = ?`,
+              AND proj = ?
+      ORDER BY         
+              CAST(SUBSTRING(draw_name, 6) AS UNSIGNED)
+              `,
       [proj]
     );
 
