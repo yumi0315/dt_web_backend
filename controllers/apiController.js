@@ -51,7 +51,7 @@ const getChart1 = asyncHandler(async (req, res) => {
 
     res.json(rows);
   } catch (error) {
-    console.error("Error:", err);
+    console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -73,7 +73,7 @@ const getChart2 = asyncHandler(async (req, res) => {
     );
     res.json(rows);
   } catch (error) {
-    console.error("Error:", err);
+    console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -140,7 +140,7 @@ ORDER BY
     );
     res.json(rows);
   } catch (error) {
-    console.error("Error:", err);
+    console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -202,7 +202,7 @@ const getChart5 = asyncHandler(async (req, res) => {
     );
     res.json(rows);
   } catch (error) {
-    console.error("Error:", err);
+    console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

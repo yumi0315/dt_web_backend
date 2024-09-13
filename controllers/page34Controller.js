@@ -40,7 +40,7 @@ const page3Table = asyncHandler(async (req, res) => {
     );
     res.json(rows);
   } catch (error) {
-    console.error("Error:", err);
+    console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -66,7 +66,7 @@ const page3Chart = asyncHandler(async (req, res) => {
     );
     res.json(rows);
   } catch (error) {
-    console.error("Error:", err);
+    console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -110,7 +110,7 @@ const page4Table = asyncHandler(async (req, res) => {
     );
     res.json(rows);
   } catch (error) {
-    console.error("Error:", err);
+    console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -136,7 +136,7 @@ const page4Chart = asyncHandler(async (req, res) => {
     );
     res.json(rows);
   } catch (error) {
-    console.error("Error:", err);
+    console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
