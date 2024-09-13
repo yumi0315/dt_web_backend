@@ -121,7 +121,7 @@ const page4Chart = asyncHandler(async (req, res) => {
     const [rows] = await promisePool.query(
       `
         SELECT 
-            reapon_dep, 
+            reapon_dep as respon_dep, 
             COUNT(final_poss_date) AS Plan_count,
             SUM(CASE WHEN perform <= ? THEN 1 ELSE 0 END) AS Completed_Tasks,
             ROUND((SUM(CASE WHEN perform <= ? THEN 1 ELSE 0 END) * 100.0 / COUNT(final_poss_date)), 2) AS "Achievement_Rate"
