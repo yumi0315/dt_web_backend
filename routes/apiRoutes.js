@@ -22,7 +22,8 @@ const {
   page5table2,
   page5chart2,
   page5table3,
-} = require("../controllers/page5Controller");
+  page6Table,
+} = require("../controllers/page56Controller");
 
 // router.use(authenticateJWT);
 router.route("/image").get(getImage);
@@ -41,5 +42,7 @@ router.route("/page4/chart").post(page4Chart);
 router.route("/page5/table2").get(page5table2);
 router.route("/page5/chart2").get(page5chart2);
 router.route("/page5/table3").get(page5table3);
+
+router.route("/page6/table").post(page6Table);
 
 module.exports = router;
