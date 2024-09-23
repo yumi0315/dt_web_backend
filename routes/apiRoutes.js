@@ -27,6 +27,8 @@ const {
 
 const { getWeather } = require("../controllers/weatherController");
 
+const { getNews } = require("../controllers/newsController");
+
 // router.use(authenticateJWT);
 router.route("/image").get(getImage);
 router.route("/chart1/:proj").get(getChart1);
@@ -48,5 +50,7 @@ router.route("/page5/table3").get(page5table3);
 router.route("/page6/table").post(page6Table);
 
 router.route("/weather").get(getWeather);
+
+router.route("/news").get(getNews);
 
 module.exports = router;
