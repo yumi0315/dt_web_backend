@@ -71,7 +71,7 @@ const getWeather = asyncHandler(async (req, res) => {
     });
 
     // JSON 형식으로 응답
-    res.json(weeklyForecasts.splice(0, 7));
+    res.json(weeklyForecasts.splice(0, 5));
   } catch (error) {
     console.error(error);
     res.status(500).send("Error fetching data");
